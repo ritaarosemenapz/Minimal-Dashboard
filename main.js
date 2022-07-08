@@ -1,22 +1,3 @@
-// & WEATHER ICONS
-const weatherIconsCollection = {
-  thunderstorm: `<i class="fa-solid fa-cloud-bolt"></i>`,
-  clouds: `<i class="fa-solid fa-cloud"></i>`,
-  drizzle: `<i class="fa-solid fa-cloud-drizzle"></i>`,
-  rain: `<i class="fa-solid fa-cloud-showers-heavy"></i>`,
-  snow: `<i class="fa-solid fa-snowflakes"></i>`,
-  mist: `<i class="fa-solid fa-raindrops"></i>`,
-  smoke: `<i class="fa-solid fa-smoke"></i>`,
-  haze: `<i class="fa-solid fa-sun-haze"></i>`,
-  dust: `<i class="fa-solid fa-sun-dust"></i>`,
-  fog: `<i class="fa-solid fa-cloud-fog"></i>`,
-  sand: `<i class="fa-solid fa-wind-warning"></i>`,
-  ash: `<i class="fa-solid fa-heat"></i>`,
-  squall: `<i class="fa-solid fa-wind"></i>`,
-  tornado: `<i class="fa-solid fa-tornado"></i>`,
-  clear: `<i class="fa-solid fa-sun"></i>`,
-};
-
 // & GREETING FUNCTION
 function getGreeting() {
   let user = "Rita";
