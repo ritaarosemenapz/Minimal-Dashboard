@@ -17,10 +17,11 @@
     <main id="main">
       <div class="top-container">
         <div class="weather-div" id="weather-div">
-          <div id="temp-top">
-          </div>
+          <div id="temp-top"></div>
           <div id="temp-secondary"></div>
-          <input type="text" id="location-input" class="input-text" placeholder="Change location">
+          <i class="fa-solid fa-location-dot">
+            <input type="text" id="location-input" class="input-text" placeholder="Change location">
+          </i>
         </div>
         <div id="open-tasks-container" class="open-tasks-container">
           <div class="tasks-btn-container">
@@ -34,8 +35,9 @@
       </div>
       <div class="bottom-container" id="bottom-container">
         <div class="photo-info">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" placeholder="Change background" id="background-query-input" class="input-text">
+          <i class="fa-solid fa-camera">
+            <input type="text" placeholder="Change background" id="background-query-input" class="input-text">
+          </i>
           <div class="geo-info" id="geo-info"></div>
           <p id="author-info"></p>
         </div>
@@ -57,11 +59,14 @@
     <section>
       <span id="pomodoro-container" class="pomodoro-container hide">
         <span class="pomodoro-timer">
-          <span id="pomodoro-minutes">0</span>
+          <span id="pomodoro-minutes">25:</span>
           <span id="pomodoro-seconds">00</span>
           <span id="pomodoro-control-buttons">
             <button id="start-pomodoro">
               <i id="new-timer-init" class="fa-solid fa-circle-play nav-item"></i>
+            </button>
+            <button id="pause-pomodoro">
+              <i id="new-timer-pause" class="fa-solid fa-circle-pause nav-item"></i>
             </button>
           </span>
         </span>

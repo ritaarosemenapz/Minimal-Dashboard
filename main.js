@@ -1,4 +1,31 @@
-// & GREETING FUNCTION
+function getBackground() {
+  if (localStorage.getItem("background query")) {
+    backgroundQuery = localStorage.getItem("background query");
+  }
+  fetch(
+    `https://apis.scrimba.com/unsplash/photos/random?orientation=landscape&query=${backgroundQuery}`
+  )
+    .then(response => response.json())
+    .then(data => {
+      if (data.location.position && data.location.name) {
+        document.body.style.backgroundImage = `url(${data.urls.full})`;
+        document.getElementById(
+          "author-info"
+        ).innerHTML = `Photo by: ${data.user.name}`;
+        document.getElementById("geo-info").innerHTML = `
+        ${data.location.name}
+        `;
+      }
+    })
+
+    .catch(err => {
+      document.body.style.backgroundImage = url(
+        "https://images.unsplash.com/photo-1656643950245-ea965f500549?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80"
+      );
+    });
+}
+getBackground();
+
 function getGreeting() {
   let user = "Rita";
   let timeNow = new Date().getHours();
@@ -24,33 +51,6 @@ backgroundQueryInput.addEventListener("keypress", event => {
     getBackground();
   }
 });
-
-function getBackground() {
-  if (localStorage.getItem("background query")) {
-    backgroundQuery = localStorage.getItem("background query");
-  }
-  fetch(
-    `https://apis.scrimba.com/unsplash/photos/random?orientation=landscape&query=${backgroundQuery}`
-  )
-    .then(response => response.json())
-    .then(data => {
-      if (data.location.position && data.location.name) {
-        document.body.style.backgroundImage = `url(${data.urls.full})`;
-        document.getElementById(
-          "author-info"
-        ).innerHTML = `Photo by: ${data.user.name}`;
-        document.getElementById("geo-info").innerHTML = `
-        ${data.location.name}
-        `;
-      }
-    })
-
-    .catch(err => {
-      console.error(err);
-      document.body.style.backgroundColor = "#333";
-    });
-}
-getBackground();
 
 function getCurrentTime() {
   let currentTime = new Date().toLocaleTimeString("ko-KR", {
@@ -92,7 +92,6 @@ function getCurrentWeather(location) {
       return response.json();
     })
     .then(data => {
-      console.log(data);
       const currentTemp = Math.round(data.main.temp);
       const currentTempLocation = `${data.name}, ${data.sys.country}`;
       const currentTempIcon = `${data.weather[0].icon}`;
@@ -111,10 +110,8 @@ function getCurrentWeather(location) {
 }
 getCurrentWeather(locationQuery);
 
-// & TODO LIST
 let taskList = [];
-let completedTasks = [];
-const data = JSON.parse(localStorage.getItem("tasks"));
+const savedTasks = JSON.parse(localStorage.getItem("tasks"));
 render();
 
 function showHideTasks() {
@@ -152,46 +149,43 @@ function addTask() {
 
 function buildTaskHtml(item) {
   return `
-  <span value="${item}">
-  <input type="checkbox" id="checkbox" value="${item}"></input>
-  <input id="current-task" value="${item}" class="input-text" readonly/>
-  </span>
+  <div class="task-item">
+    <input type="checkbox" id="checkbox" value="${item}">
+    </input>
+    <ul id="current-task" class="input-text">${item}</ul>
+  </div>
   `;
 }
 
 function render() {
   const taskContainer = document.getElementById("task-container");
-  const getTasks = JSON.parse(localStorage.getItem("tasks"));
   taskContainer.innerHTML = "";
-  if (getTasks) {
-    taskList = getTasks;
-    for (let item of taskList) {
-      taskContainer.innerHTML += buildTaskHtml(item);
+  if (savedTasks) {
+    taskList = savedTasks;
+    for (let tasks of taskList) {
+      taskContainer.innerHTML += buildTaskHtml(tasks);
     }
   }
-
-  const currentTask = document.querySelectorAll("#current-task");
-  const checkBox = document.querySelectorAll("#checkbox");
-
-  for (let boxes of checkBox) {
-    const boxesId = boxes.getAttribute("value");
-    for (let item of currentTask) {
-      const currentTaskId = item.getAttribute("value");
-      boxes.addEventListener("change", () => {
+  const currentTasks = document.querySelectorAll("#current-task");
+  const checkBoxes = document.querySelectorAll("#checkbox");
+  for (let box of checkBoxes) {
+    const boxesId = box.getAttribute("value");
+    for (let task of currentTasks) {
+      const currentTaskId = task.innerHTML;
+      box.addEventListener("change", () => {
         if (boxesId === currentTaskId) {
-          markAsDone(item);
+          markAsDone(task);
         }
       });
     }
   }
 }
 
-function markAsDone(item) {
-  item.classList.toggle("done");
-  const itemContainer = item.parentElement;
-  const newData = data.filter(task => task !== item.value);
+function markAsDone(task) {
+  const taskContainer = task.parentElement;
+  const newData = savedTasks.filter(data => data !== task.innerHTML);
   localStorage.setItem("tasks", JSON.stringify(newData));
-  itemContainer.remove(item);
+  taskContainer.remove(task);
 }
 
 document.querySelector("form").addEventListener("submit", event => {
@@ -206,57 +200,67 @@ function saveTasks(listOfTasks) {
 
 // * POMODORO
 const modeButtons = document.querySelectorAll("button");
-const pomodoroMinutesHtml = document.getElementById("pomodoro-minutes");
-const pomodoroSecondsHtml = document.getElementById("pomodoro-seconds");
 const pomodoroStats = document.getElementById("pomodoro-stats");
+const minutesContainer = document.getElementById("pomodoro-minutes");
+const secondsContainer = document.getElementById("pomodoro-seconds");
+const startPomodoroBtn = document.getElementById("start-pomodoro");
+const pausePomodoroBtn = document.getElementById("pause-pomodoro");
 
 let completedIntervals = 0;
+let sessionMinutes = 24;
+let sessionSeconds = 60;
+let isClockRunning;
 
-for (let mode of modeButtons) {
-  mode.addEventListener("click", () => {
-    if (mode.id === "start-pomodoro") {
-      startTimer();
-    }
-  });
+startPomodoroBtn.addEventListener("click", () => {
+  if (isClockRunning === undefined) {
+    isClockRunning = setInterval(runTimer, 1000);
+    pomodoroMusic.tracks[1].play();
+  }
+});
+
+pausePomodoroBtn.addEventListener("click", () => {
+  clearInterval(isClockRunning);
+  isClockRunning = undefined;
+  pomodoroMusic.tracks[1].pause();
+});
+
+function runTimer() {
+  if (sessionSeconds > 0) {
+    sessionSeconds--;
+  } else if (sessionSeconds === 0 && sessionSeconds > 0) {
+    sessionMinutes--;
+    sessionSeconds = 59;
+  }
+  minutesContainer.innerHTML = `${sessionMinutes}:`;
+  secondsContainer.innerHTML = `${sessionSeconds}`.padStart(2, "0");
 }
 
-function startTimer() {
-  let minutes = 0;
-  let seconds = 5;
-  const startTimer = setInterval(() => {
-    pomodoroMinutesHtml.innerHTML = `${minutes}:`;
-    pomodoroSecondsHtml.innerHTML = `${seconds}`.padStart(2, "0");
-    seconds--;
-    if (seconds < 0 && minutes > 0) {
-      minutes--;
-      seconds = 5;
-    } else if (seconds < 0 && minutes <= 0) {
-      addInterval();
-      loadInterval();
-      clearInterval(startTimer);
-    }
-  }, 1000);
-}
+const pomodoroMusic = {
+  tracks: {
+    1: new Audio(
+      "https://dl.dropboxusercontent.com/s/u7x2g2ss708nwcp/lofi-study-112191.mp3?dl=0"
+    ),
+  },
+};
 
-function addInterval() {
+function addIntervals() {
   completedIntervals++;
   localStorage.setItem("pomodoro intervals", completedIntervals);
 }
 
-function loadInterval() {
+function resetIntervals() {
   const now = new Date();
-  const expiration = new Date().setHours(0, 0, 0, 0);
-  const savedData = localStorage.getItem("pomodoro intervals");
+  const expiration = new Date().setHours(0, 0);
   if (now.getTime() === expiration) {
     localStorage.removeItem("pomodoro intervals");
-  } else if (savedData) {
-    completedIntervals = savedData;
-  } else {
-    completedIntervals = 0;
   }
-  pomodoroStats.innerHTML = `
-    Karma ${completedIntervals} <i class="fa-solid fa-heart"></i>
-    `;
 }
 
-loadInterval();
+function loadIntervals() {
+  const savedData = localStorage.getItem("pomodoro intervals");
+  savedData ? (completedIntervals = savedData) : (completedIntervals = 0);
+  return (pomodoroStats.innerHTML = `
+    Karma ${completedIntervals} <i class="fa-solid fa-heart"></i>
+    `);
+}
+loadIntervals();

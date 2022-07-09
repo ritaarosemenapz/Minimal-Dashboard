@@ -44,6 +44,18 @@ main {
   outline: none;
 }
 
+.task-item {
+  display: flex;
+  line-height: 1.4em;
+  align-items: baseline;
+}
+
+.task-item > ul {
+  word-wrap: break-word;
+  margin-left: 0.5rem;
+  font-size: 1.1rem;
+}
+
 /* ! GENERAL STYLES */
 /* * TOP CONTAINER */
 .top-container {
@@ -103,6 +115,7 @@ main {
   margin-top: 1em;
   display: flex;
   flex-direction: column;
+  width: 200px;
 }
 
 .task-container span {
@@ -157,6 +170,10 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+.pomodoro-container * {
+  color: #fff;
 }
 
 .pomodoro-timer {

@@ -124,7 +124,26 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-// & GREETING FUNCTION
+function getBackground() {
+  if (localStorage.getItem("background query")) {
+    backgroundQuery = localStorage.getItem("background query");
+  }
+
+  fetch("https://apis.scrimba.com/unsplash/photos/random?orientation=landscape&query=".concat(backgroundQuery)).then(function (response) {
+    return response.json();
+  }).then(function (data) {
+    if (data.location.position && data.location.name) {
+      document.body.style.backgroundImage = "url(".concat(data.urls.full, ")");
+      document.getElementById("author-info").innerHTML = "Photo by: ".concat(data.user.name);
+      document.getElementById("geo-info").innerHTML = "\n        ".concat(data.location.name, "\n        ");
+    }
+  }).catch(function (err) {
+    document.body.style.backgroundImage = url("https://images.unsplash.com/photo-1656643950245-ea965f500549?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80");
+  });
+}
+
+getBackground();
+
 function getGreeting() {
   var user = "Rita";
   var timeNow = new Date().getHours();
@@ -144,27 +163,6 @@ backgroundQueryInput.addEventListener("keypress", function (event) {
     getBackground();
   }
 });
-
-function getBackground() {
-  if (localStorage.getItem("background query")) {
-    backgroundQuery = localStorage.getItem("background query");
-  }
-
-  fetch("https://apis.scrimba.com/unsplash/photos/random?orientation=landscape&query=".concat(backgroundQuery)).then(function (response) {
-    return response.json();
-  }).then(function (data) {
-    if (data.location.position && data.location.name) {
-      document.body.style.backgroundImage = "url(".concat(data.urls.full, ")");
-      document.getElementById("author-info").innerHTML = "Photo by: ".concat(data.user.name);
-      document.getElementById("geo-info").innerHTML = "\n        ".concat(data.location.name, "\n        ");
-    }
-  }).catch(function (err) {
-    console.error(err);
-    document.body.style.backgroundColor = "#333";
-  });
-}
-
-getBackground();
 
 function getCurrentTime() {
   var currentTime = new Date().toLocaleTimeString("ko-KR", {
@@ -199,7 +197,6 @@ function getCurrentWeather(location) {
 
     return response.json();
   }).then(function (data) {
-    console.log(data);
     var currentTemp = Math.round(data.main.temp);
     var currentTempLocation = "".concat(data.name, ", ").concat(data.sys.country);
     var currentTempIcon = "".concat(data.weather[0].icon);
@@ -210,11 +207,9 @@ function getCurrentWeather(location) {
   });
 }
 
-getCurrentWeather(locationQuery); // & TODO LIST
-
+getCurrentWeather(locationQuery);
 var taskList = [];
-var completedTasks = [];
-var data = JSON.parse(localStorage.getItem("tasks"));
+var savedTasks = JSON.parse(localStorage.getItem("tasks"));
 render();
 
 function showHideTasks() {
@@ -253,24 +248,23 @@ function addTask() {
 }
 
 function buildTaskHtml(item) {
-  return "\n  <span value=\"".concat(item, "\">\n  <input type=\"checkbox\" id=\"checkbox\" value=\"").concat(item, "\"></input>\n  <input id=\"current-task\" value=\"").concat(item, "\" class=\"input-text\" readonly/>\n  </span>\n  ");
+  return "\n  <div class=\"task-item\">\n    <input type=\"checkbox\" id=\"checkbox\" value=\"".concat(item, "\">\n    </input>\n    <ul id=\"current-task\" class=\"input-text\">").concat(item, "</ul>\n  </div>\n  ");
 }
 
 function render() {
   var taskContainer = document.getElementById("task-container");
-  var getTasks = JSON.parse(localStorage.getItem("tasks"));
   taskContainer.innerHTML = "";
 
-  if (getTasks) {
-    taskList = getTasks;
+  if (savedTasks) {
+    taskList = savedTasks;
 
     var _iterator = _createForOfIteratorHelper(taskList),
         _step;
 
     try {
       for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var item = _step.value;
-        taskContainer.innerHTML += buildTaskHtml(item);
+        var tasks = _step.value;
+        taskContainer.innerHTML += buildTaskHtml(tasks);
       }
     } catch (err) {
       _iterator.e(err);
@@ -279,27 +273,27 @@ function render() {
     }
   }
 
-  var currentTask = document.querySelectorAll("#current-task");
-  var checkBox = document.querySelectorAll("#checkbox");
+  var currentTasks = document.querySelectorAll("#current-task");
+  var checkBoxes = document.querySelectorAll("#checkbox");
 
-  var _iterator2 = _createForOfIteratorHelper(checkBox),
+  var _iterator2 = _createForOfIteratorHelper(checkBoxes),
       _step2;
 
   try {
     var _loop = function _loop() {
-      var boxes = _step2.value;
-      var boxesId = boxes.getAttribute("value");
+      var box = _step2.value;
+      var boxesId = box.getAttribute("value");
 
-      var _iterator3 = _createForOfIteratorHelper(currentTask),
+      var _iterator3 = _createForOfIteratorHelper(currentTasks),
           _step3;
 
       try {
         var _loop2 = function _loop2() {
-          var item = _step3.value;
-          var currentTaskId = item.getAttribute("value");
-          boxes.addEventListener("change", function () {
+          var task = _step3.value;
+          var currentTaskId = task.innerHTML;
+          box.addEventListener("change", function () {
             if (boxesId === currentTaskId) {
-              markAsDone(item);
+              markAsDone(task);
             }
           });
         };
@@ -324,14 +318,13 @@ function render() {
   }
 }
 
-function markAsDone(item) {
-  item.classList.toggle("done");
-  var itemContainer = item.parentElement;
-  var newData = data.filter(function (task) {
-    return task !== item.value;
+function markAsDone(task) {
+  var taskContainer = task.parentElement;
+  var newData = savedTasks.filter(function (data) {
+    return data !== task.innerHTML;
   });
   localStorage.setItem("tasks", JSON.stringify(newData));
-  itemContainer.remove(item);
+  taskContainer.remove(task);
 }
 
 document.querySelector("form").addEventListener("submit", function (event) {
@@ -346,74 +339,66 @@ function saveTasks(listOfTasks) {
 
 
 var modeButtons = document.querySelectorAll("button");
-var pomodoroMinutesHtml = document.getElementById("pomodoro-minutes");
-var pomodoroSecondsHtml = document.getElementById("pomodoro-seconds");
 var pomodoroStats = document.getElementById("pomodoro-stats");
+var minutesContainer = document.getElementById("pomodoro-minutes");
+var secondsContainer = document.getElementById("pomodoro-seconds");
+var startPomodoroBtn = document.getElementById("start-pomodoro");
+var pausePomodoroBtn = document.getElementById("pause-pomodoro");
 var completedIntervals = 0;
-
-var _iterator4 = _createForOfIteratorHelper(modeButtons),
-    _step4;
-
-try {
-  var _loop3 = function _loop3() {
-    var mode = _step4.value;
-    mode.addEventListener("click", function () {
-      if (mode.id === "start-pomodoro") {
-        startTimer();
-      }
-    });
-  };
-
-  for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-    _loop3();
+var sessionMinutes = 24;
+var sessionSeconds = 60;
+var isClockRunning;
+startPomodoroBtn.addEventListener("click", function () {
+  if (isClockRunning === undefined) {
+    isClockRunning = setInterval(runTimer, 1000);
+    pomodoroMusic.tracks[1].play();
   }
-} catch (err) {
-  _iterator4.e(err);
-} finally {
-  _iterator4.f();
+});
+pausePomodoroBtn.addEventListener("click", function () {
+  clearInterval(isClockRunning);
+  isClockRunning = undefined;
+  pomodoroMusic.tracks[1].pause();
+});
+
+function runTimer() {
+  if (sessionSeconds > 0) {
+    sessionSeconds--;
+  } else if (sessionSeconds === 0 && sessionSeconds > 0) {
+    sessionMinutes--;
+    sessionSeconds = 59;
+  }
+
+  minutesContainer.innerHTML = "".concat(sessionMinutes, ":");
+  secondsContainer.innerHTML = "".concat(sessionSeconds).padStart(2, "0");
 }
 
-function startTimer() {
-  var minutes = 0;
-  var seconds = 5;
-  var startTimer = setInterval(function () {
-    pomodoroMinutesHtml.innerHTML = "".concat(minutes, ":");
-    pomodoroSecondsHtml.innerHTML = "".concat(seconds).padStart(2, "0");
-    seconds--;
+var pomodoroMusic = {
+  tracks: {
+    1: new Audio("https://dl.dropboxusercontent.com/s/u7x2g2ss708nwcp/lofi-study-112191.mp3?dl=0")
+  }
+};
 
-    if (seconds < 0 && minutes > 0) {
-      minutes--;
-      seconds = 5;
-    } else if (seconds < 0 && minutes <= 0) {
-      addInterval();
-      loadInterval();
-      clearInterval(startTimer);
-    }
-  }, 1000);
-}
-
-function addInterval() {
+function addIntervals() {
   completedIntervals++;
   localStorage.setItem("pomodoro intervals", completedIntervals);
 }
 
-function loadInterval() {
+function resetIntervals() {
   var now = new Date();
-  var expiration = new Date().setHours(0, 0, 0, 0);
-  var savedData = localStorage.getItem("pomodoro intervals");
+  var expiration = new Date().setHours(0, 0);
 
   if (now.getTime() === expiration) {
     localStorage.removeItem("pomodoro intervals");
-  } else if (savedData) {
-    completedIntervals = savedData;
-  } else {
-    completedIntervals = 0;
   }
-
-  pomodoroStats.innerHTML = "\n    Karma ".concat(completedIntervals, " <i class=\"fa-solid fa-heart\"></i>\n    ");
 }
 
-loadInterval();
+function loadIntervals() {
+  var savedData = localStorage.getItem("pomodoro intervals");
+  savedData ? completedIntervals = savedData : completedIntervals = 0;
+  return pomodoroStats.innerHTML = "\n    Karma ".concat(completedIntervals, " <i class=\"fa-solid fa-heart\"></i>\n    ");
+}
+
+loadIntervals();
 },{}],"../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -442,7 +427,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50337" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54500" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
