@@ -13,7 +13,7 @@ function getBackground() {
           "author-info"
         ).innerHTML = `Photo by: ${data.user.name}`;
         document.getElementById("geo-info").innerHTML = `
-        ${data.location.name}
+        ${data.location.country}
         `;
       }
     })
@@ -27,9 +27,13 @@ function getBackground() {
 getBackground();
 
 function getGreeting() {
-  let user = "Rita";
-  let timeNow = new Date().getHours();
+  const userNameInput = document.getElementById("username");
+  const greetingContainer = document.getElementById("greeting")
+  const getUserNameContainer = document.getElementById("get-username")
+  const centralContainer = document.getElementById("central-container")
+  let userName = userNameInput.value;
   let greeting;
+  let timeNow = new Date().getHours();
   timeNow < 12
     ? (greeting = "Good morning")
     : timeNow < 17
@@ -37,7 +41,13 @@ function getGreeting() {
     : timeNow < 20
     ? (greeting = "Good evening")
     : (greeting = "Good night");
-  document.getElementById("greeting").innerHTML = `${greeting}, ${user}`;
+
+  if (!userName) {
+    centralContainer.style.display = "none"
+    getUserNameContainer.style.display = "flex"
+  }
+
+  greetingContainer.innerHTML = `${greeting}, ${userName}`;
 }
 getGreeting();
 

@@ -135,7 +135,7 @@ function getBackground() {
     if (data.location.position && data.location.name) {
       document.body.style.backgroundImage = "url(".concat(data.urls.full, ")");
       document.getElementById("author-info").innerHTML = "Photo by: ".concat(data.user.name);
-      document.getElementById("geo-info").innerHTML = "\n        ".concat(data.location.name, "\n        ");
+      document.getElementById("geo-info").innerHTML = "\n        ".concat(data.location.country, "\n        ");
     }
   }).catch(function (err) {
     document.body.style.backgroundImage = url("https://images.unsplash.com/photo-1656643950245-ea965f500549?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80");
@@ -145,11 +145,21 @@ function getBackground() {
 getBackground();
 
 function getGreeting() {
-  var user = "Rita";
-  var timeNow = new Date().getHours();
+  var userNameInput = document.getElementById("username");
+  var greetingContainer = document.getElementById("greeting");
+  var getUserNameContainer = document.getElementById("get-username");
+  var centralContainer = document.getElementById("central-container");
+  var userName = userNameInput.value;
   var greeting;
+  var timeNow = new Date().getHours();
   timeNow < 12 ? greeting = "Good morning" : timeNow < 17 ? greeting = "Good afternoon" : timeNow < 20 ? greeting = "Good evening" : greeting = "Good night";
-  document.getElementById("greeting").innerHTML = "".concat(greeting, ", ").concat(user);
+
+  if (!userName) {
+    centralContainer.style.display = "none";
+    getUserNameContainer.style.display = "flex";
+  }
+
+  greetingContainer.innerHTML = "".concat(greeting, ", ").concat(userName);
 }
 
 getGreeting();
@@ -427,7 +437,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54500" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49325" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
