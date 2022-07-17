@@ -1,276 +1,274 @@
-function getBackground() {
-  if (localStorage.getItem("background query")) {
-    backgroundQuery = localStorage.getItem("background query");
-  }
-  fetch(
-    `https://apis.scrimba.com/unsplash/photos/random?orientation=landscape&query=${backgroundQuery}`
-  )
-    .then(response => response.json())
-    .then(data => {
-      if (data.location.position && data.location.name) {
-        document.body.style.backgroundImage = `url(${data.urls.full})`;
-        document.getElementById(
-          "author-info"
-        ).innerHTML = `Photo by: ${data.user.name}`;
-        document.getElementById("geo-info").innerHTML = `
-        ${data.location.country}
-        `;
-      }
+async function getRandomQuote() {
+    let response = await fetch("https://type.fit/api/quotes")
+    let data = await response.json()
+    return data
+}
+
+function displayQuote() {
+    const quoteContainer = document.getElementById("quote-container")
+    getRandomQuote().then(data => {
+        const randomQuote = Math.floor(Math.random() * data.length)
+        quoteContainer.innerHTML = `
+        <blockquote>"${data[randomQuote].text}" – ${data[randomQuote].author}</blockquote>
+        `
     })
-
-    .catch(err => {
-      document.body.style.backgroundImage = url(
-        "https://images.unsplash.com/photo-1656643950245-ea965f500549?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80"
-      );
-    });
 }
-getBackground();
+displayQuote()
 
-function getGreeting() {
-  const userNameInput = document.getElementById("username");
-  const greetingContainer = document.getElementById("greeting")
-  const getUserNameContainer = document.getElementById("get-username")
-  const centralContainer = document.getElementById("central-container")
-  let userName = userNameInput.value;
-  let greeting;
-  let timeNow = new Date().getHours();
-  timeNow < 12
-    ? (greeting = "Good morning")
-    : timeNow < 17
-    ? (greeting = "Good afternoon")
-    : timeNow < 20
-    ? (greeting = "Good evening")
-    : (greeting = "Good night");
-
-  if (!userName) {
-    centralContainer.style.display = "none"
-    getUserNameContainer.style.display = "flex"
-  }
-
-  greetingContainer.innerHTML = `${greeting}, ${userName}`;
-}
-getGreeting();
-
-const backgroundQueryInput = document.getElementById("background-query-input");
-let backgroundQuery;
-backgroundQueryInput.addEventListener("keypress", event => {
-  if (event.key === "Enter") {
-    backgroundQuery = backgroundQueryInput.value;
-    localStorage.setItem("background query", backgroundQuery);
-    backgroundQueryInput.value = "";
-    getBackground();
-  }
-});
-
-function getCurrentTime() {
-  let currentTime = new Date().toLocaleTimeString("ko-KR", {
-    timeStyle: "medium",
-  });
-  let currentDate = new Date().toLocaleDateString("ko-KR");
-  document.getElementById("clock-info").innerHTML = `
-   <span>${currentDate}</span>
-   <span>${currentTime}</span>
-   `;
+function getGreetingTime() {
+    let greeting
+    let timeNow = new Date().getHours()
+    timeNow < 12
+        ? (greeting = "Good morning")
+        : timeNow < 17
+        ? (greeting = "Good afternoon")
+        : timeNow < 20
+        ? (greeting = "Good evening")
+        : (greeting = "Good night")
+    return greeting
 }
 
-setInterval(getCurrentTime, 1000);
+function getUsername() {
+    const centralContainer = document.getElementById("central-container")
+    const getUsernameContainer = document.getElementById("get-username")
+    const userNameInput = document.getElementById("username")
+    let userName
+    const savedUsername = localStorage.getItem("username")
 
-// * Fetching weather info
-
-const locationInput = document.getElementById("location-input");
-let locationQuery;
-locationInput.addEventListener("keypress", e => {
-  if (e.key === "Enter") {
-    locationQuery = locationInput.value;
-    localStorage.setItem("location", locationQuery);
-    locationInput.value = "";
-    getCurrentWeather(locationQuery);
-  }
-});
-
-function getCurrentWeather(location) {
-  if (localStorage.getItem("location")) {
-    location = localStorage.getItem("location");
-  }
-  fetch(
-    `https://apis.scrimba.com/openweathermap/data/2.5/weather?q=${location}&units=metric`
-  )
-    .then(response => {
-      if (!response.ok) {
-        throw Error("Weather data not available");
-      }
-      return response.json();
-    })
-    .then(data => {
-      const currentTemp = Math.round(data.main.temp);
-      const currentTempLocation = `${data.name}, ${data.sys.country}`;
-      const currentTempIcon = `${data.weather[0].icon}`;
-      document.getElementById("temp-top").innerHTML = `
-        <span class="temp-info">
-        <img class="weather-icon" src="http://openweathermap.org/img/wn/${currentTempIcon}@2x.png"/>
-        ${currentTemp}°</span>`;
-      document.getElementById(
-        "temp-secondary"
-      ).innerHTML = `<div class="temp-secondary">
-        <p class="current-temp-location">${currentTempLocation}</p>
-        </div>    
-        `;
-    })
-    .catch(err => console.error(err));
-}
-getCurrentWeather(locationQuery);
-
-let taskList = [];
-const savedTasks = JSON.parse(localStorage.getItem("tasks"));
-render();
-
-function showHideTasks() {
-  const todoContainer = document.getElementById("todo-container-parent");
-  document.getElementById("open-tasks-btn").addEventListener("click", () => {
-    if (todoContainer.classList.contains("hide")) {
-      todoContainer.classList.remove("hide");
+    if (savedUsername) {
+        userName = savedUsername
+        displayGreeting()
     } else {
-      todoContainer.classList.add("hide");
+        centralContainer.style.display = "none"
+        getUsernameContainer.style.display = "flex"
     }
-  });
-}
-showHideTasks();
 
-function showHidePomodoro() {
-  const pomodoroButton = document.getElementById("open-pomodoro-btn");
-  const pomodoroContainer = document.getElementById("pomodoro-container");
-  pomodoroButton.addEventListener("click", () => {
-    if (pomodoroContainer.classList.contains("hide")) {
-      pomodoroContainer.classList.remove("hide");
-    } else {
-      pomodoroContainer.classList.add("hide");
-    }
-  });
+    userNameInput.addEventListener("keypress", event => {
+        if (event.key === "Enter") {
+            userName = userNameInput.value
+            userNameInput.value = ""
+            localStorage.setItem("username", userName)
+            displayGreeting()
+        }
+    })
 }
-showHidePomodoro();
+getUsername()
+
+function displayGreeting() {
+    const centralContainer = document.getElementById("central-container")
+    centralContainer.style.display = "block"
+    document.getElementById("get-username").style.display = "none"
+    const greetingContainer = document.getElementById("greeting")
+    const savedUsername = localStorage.getItem("username")
+    greetingContainer.innerHTML = `<h2>${getGreetingTime()}, ${savedUsername}</h2>`
+    let currentTime = new Date().toLocaleTimeString("ko-KO", {
+        timeStyle: "medium",
+    })
+    let currentDate = new Date().toLocaleDateString("ko-KO")
+    document.getElementById("clock-info").innerHTML = `
+    <h3>${currentDate}</h3>
+    <h3>${currentTime}</h3>
+    `
+    setInterval(displayGreeting, 1000)
+}
+
+
+async function getCurrentWeather() {
+    const locationInput = document.getElementById("location-input")
+    let locationQuery
+    const savedLocation = localStorage.getItem("location")
+
+    if (savedLocation) {
+        locationQuery = savedLocation
+    } 
+
+    locationInput.addEventListener("keypress", event => {
+        if (event.key === "Enter") {
+            locationQuery = locationInput.value
+            locationInput.value = ""
+            localStorage.setItem("location", locationQuery)
+            displayCurrentWeather()
+        }
+    })
+
+    let response = await fetch(
+        `https://apis.scrimba.com/openweathermap/data/2.5/weather?q=${locationQuery}&units=metric`
+    )
+    let data = await response.json()
+    return data
+}
+
+function displayCurrentWeather() {
+    getCurrentWeather().then(data => {
+        const currentTempIcon = `${data.weather[0].icon}`
+        const currentTemp = Math.trunc(data.main.temp)
+        const currentTempLocation = `${data.name}, ${data.sys.country}`
+        document.getElementById("temp-top").innerHTML = `
+        <span class="temp-info animate__fadeIn">
+            <img class="weather-icon" src="http://openweathermap.org/img/wn/${currentTempIcon}@2x.png"/>
+            </span>
+        <h3>${currentTemp}°</h3>
+        <p class="temp-city-name">${currentTempLocation}</p>
+        `
+    })
+}
+
+displayCurrentWeather()
+
+function toggleTasksVisibility() {
+    const todoContainer = document.getElementById("todo-container-parent")
+    const greetingContainer = document.getElementById("greeting")
+    document.getElementById("open-tasks-btn").addEventListener("click", () => {
+        if (todoContainer.classList.contains("hide")) {
+            todoContainer.classList.remove("hide")
+            greetingContainer.style.display = "none"
+        } else {
+            todoContainer.classList.add("hide")
+            greetingContainer.style.display = "block"
+        }
+    })
+}
+toggleTasksVisibility()
+
+function togglePomodoroVisibility() {
+    const pomodoroButton = document.getElementById("open-pomodoro-btn")
+    const pomodoroContainer = document.getElementById("pomodoro-container")
+    const greetingContainer = document.getElementById("greeting")
+    const clockContainer = document.getElementById("clock-info")
+    pomodoroButton.addEventListener("click", () => {
+        if (pomodoroContainer.classList.contains("hide")) {
+            pomodoroContainer.classList.remove("hide")
+            greetingContainer.style.display = "none"
+            clockContainer.style.display = "none"
+        } else {
+            pomodoroContainer.classList.add("hide")
+            greetingContainer.style.display = "block"
+            clockContainer.style.display = "flex"
+        }
+    })
+}
+togglePomodoroVisibility()
+
+let taskList = []
+const savedTasks = JSON.parse(localStorage.getItem("tasks"))
+displayTasks()
 
 function addTask() {
-  const taskInput = document.getElementById("task-input");
-  const newTask = taskInput.value;
-  taskList.unshift(newTask);
-  taskInput.value = "";
-  saveTasks(taskList);
-}
+    const taskInput = document.getElementById("task-input")
+    let newTask
 
-function buildTaskHtml(item) {
-  return `
-  <div class="task-item">
-    <input type="checkbox" id="checkbox" value="${item}">
-    </input>
-    <ul id="current-task" class="input-text">${item}</ul>
-  </div>
-  `;
-}
-
-function render() {
-  const taskContainer = document.getElementById("task-container");
-  taskContainer.innerHTML = "";
-  if (savedTasks) {
-    taskList = savedTasks;
-    for (let tasks of taskList) {
-      taskContainer.innerHTML += buildTaskHtml(tasks);
-    }
-  }
-  const currentTasks = document.querySelectorAll("#current-task");
-  const checkBoxes = document.querySelectorAll("#checkbox");
-  for (let box of checkBoxes) {
-    const boxesId = box.getAttribute("value");
-    for (let task of currentTasks) {
-      const currentTaskId = task.innerHTML;
-      box.addEventListener("change", () => {
-        if (boxesId === currentTaskId) {
-          markAsDone(task);
+    taskInput.addEventListener("keypress", event => {
+        if (event.key === "Enter" && taskInput.value.length > 0) {
+            newTask = taskInput.value
+            taskList.unshift(newTask)
+            taskInput.value = ""
+            localStorage.setItem("tasks", JSON.stringify(taskList))
+            displayTasks()
         }
-      });
+    })
+}
+addTask()
+
+function displayTasks() {
+    const taskContainer = document.getElementById("task-container")
+    taskContainer.innerHTML = ""
+
+    if (savedTasks) {
+        taskList = savedTasks
     }
-  }
+
+    for (let task of taskList) {
+        taskContainer.innerHTML += `
+        <div id="task-item" class="task-item">
+          <input type="checkbox" value="${task}">
+          <ul id="current-task">${task}</ul>
+        </div>
+        `
+    }
+    markAsDone()
 }
 
-function markAsDone(task) {
-  const taskContainer = task.parentElement;
-  const newData = savedTasks.filter(data => data !== task.innerHTML);
-  localStorage.setItem("tasks", JSON.stringify(newData));
-  taskContainer.remove(task);
+
+function markAsDone() {
+    const checkBoxes = document.querySelectorAll('input[type="checkbox"]')
+    const currentTasks = document.querySelectorAll("#current-task")
+    
+    checkBoxes.forEach(box => {
+        box.addEventListener("change", () => {
+            for (let task of currentTasks) {
+                if (task.innerHTML === box.value)
+                task.classList.toggle("done-task")
+            }
+        })
+    })
 }
 
-document.querySelector("form").addEventListener("submit", event => {
-  event.preventDefault();
-  addTask();
-  render();
-});
+const pomodoroStats = document.getElementById("pomodoro-stats")
+const minutesContainer = document.getElementById("pomodoro-minutes")
+const secondsContainer = document.getElementById("pomodoro-seconds")
+const startPomodoroBtn = document.getElementById("start-pomodoro")
+const pausePomodoroBtn = document.getElementById("pause-pomodoro")
 
-function saveTasks(listOfTasks) {
-  localStorage.setItem("tasks", JSON.stringify(listOfTasks));
-}
-
-// * POMODORO
-const modeButtons = document.querySelectorAll("button");
-const pomodoroStats = document.getElementById("pomodoro-stats");
-const minutesContainer = document.getElementById("pomodoro-minutes");
-const secondsContainer = document.getElementById("pomodoro-seconds");
-const startPomodoroBtn = document.getElementById("start-pomodoro");
-const pausePomodoroBtn = document.getElementById("pause-pomodoro");
-
-let completedIntervals = 0;
-let sessionMinutes = 24;
-let sessionSeconds = 60;
-let isClockRunning;
+let completedIntervals = 0
+let isClockRunning
+let sessionMinutes = 0
+let sessionSeconds = 5
 
 startPomodoroBtn.addEventListener("click", () => {
-  if (isClockRunning === undefined) {
-    isClockRunning = setInterval(runTimer, 1000);
-    pomodoroMusic.tracks[1].play();
-  }
-});
+    if (isClockRunning === undefined) {
+        isClockRunning = setInterval(runTimer, 1000)
+    }
+})
 
 pausePomodoroBtn.addEventListener("click", () => {
-  clearInterval(isClockRunning);
-  isClockRunning = undefined;
-  pomodoroMusic.tracks[1].pause();
-});
+    clearInterval(isClockRunning)
+    isClockRunning = undefined
+    pomodoroMusic.tracks[1].pause()
+})
 
 function runTimer() {
-  if (sessionSeconds > 0) {
-    sessionSeconds--;
-  } else if (sessionSeconds === 0 && sessionSeconds > 0) {
-    sessionMinutes--;
-    sessionSeconds = 59;
-  }
-  minutesContainer.innerHTML = `${sessionMinutes}:`;
-  secondsContainer.innerHTML = `${sessionSeconds}`.padStart(2, "0");
+    if (sessionSeconds > 0) {
+        sessionSeconds--
+    } else if (sessionSeconds === 0 && sessionMinutes > 0) {
+        sessionSeconds = 59
+        sessionMinutes--
+    } else if (sessionSeconds === 0 && sessionMinutes === 0) {
+        clearInterval(isClockRunning)
+        addCompletedSession()
+        pomodoroMusic.tracks[1].play()
+        loadCompletedSessions()
+    }
+    minutesContainer.innerHTML = `${sessionMinutes}:`
+    secondsContainer.innerHTML = `${sessionSeconds}`.padStart(2, "0")
 }
 
 const pomodoroMusic = {
-  tracks: {
-    1: new Audio(
-      "https://dl.dropboxusercontent.com/s/u7x2g2ss708nwcp/lofi-study-112191.mp3?dl=0"
-    ),
-  },
-};
-
-function addIntervals() {
-  completedIntervals++;
-  localStorage.setItem("pomodoro intervals", completedIntervals);
+    tracks: {
+        1: new Audio("https://www.dl.dropboxusercontent.com/s/67usj6b8xott8ev/taskDone.mp3?dl=0"),
+    },
 }
 
-function resetIntervals() {
-  const now = new Date();
-  const expiration = new Date().setHours(0, 0);
-  if (now.getTime() === expiration) {
-    localStorage.removeItem("pomodoro intervals");
-  }
+function addCompletedSession() {
+    completedIntervals++
+    localStorage.setItem("pomodoro intervals", completedIntervals)
 }
 
-function loadIntervals() {
-  const savedData = localStorage.getItem("pomodoro intervals");
-  savedData ? (completedIntervals = savedData) : (completedIntervals = 0);
-  return (pomodoroStats.innerHTML = `
-    Karma ${completedIntervals} <i class="fa-solid fa-heart"></i>
-    `);
+function resetTotalSessions() {
+    const now = new Date()
+    const expiration = new Date().setHours(0, 0)
+    if (now.getTime() === expiration) {
+        localStorage.removeItem("pomodoro intervals")
+    }
 }
-loadIntervals();
+
+function loadCompletedSessions() {
+    resetTotalSessions()
+    const savedData = localStorage.getItem("pomodoro intervals")
+    savedData ? (completedIntervals = savedData) : (completedIntervals = 0)
+    minutesContainer.innerHTML = `25:`
+    secondsContainer.innerHTML = `00`
+    pomodoroStats.innerHTML = `<div><i class="fa-solid fa-fire"></i> ${completedIntervals}`
+}
+loadCompletedSessions()
+
+

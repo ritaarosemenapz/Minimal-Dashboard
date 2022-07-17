@@ -1,220 +1,284 @@
-* {
-  box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10 and IE 11 */
-  user-select: none; /* Standard syntax */
-  margin: 0;
-  padding: 0;
+
+*, *::after, *::before {
+    box-sizing: border-box;
+    animation-duration: 1s;
 }
 
-html,
+:root {
+    --color--dark: #262626;
+    --color--light: #ffff;
+    --color--accent: #343434;
+    --h1--: 4rem;
+    --h2--: 3.75rem;
+    --h3--: 2.75rem;
+    --body--: 1.1rem;
+}
+
+@media (min-width: 400px) {
+    :root {
+        --h1: 4rem;
+        --h2: 2.75rem;
+        --h3: 2rem;
+        --body: 1rem;
+    }
+  }
+
+h1 {
+    font-size: var(--h1--);
+    margin: 0;
+}
+
+h2 {
+    font-size: var(--h2--); 
+    margin: 0;   
+}
+
+h3 {
+    font-size: var(--h3--);
+    margin: 0;
+}
+
 body {
-  margin: 0;
-  background: no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-  text-shadow: 0px 0px 20px #aaaaaa;
-  width: 100vw;
-  height: 100vh;
+    -webkit-user-select: none; 
+    -ms-user-select: none; 
+    background-image: url("https://images.pexels.com/photos/1529881/pexels-photo-1529881.jpeg?cs=srgb&dl=pexels-d%C6%B0%C6%A1ng-nh%C3%A2n-1529881.jpg&fm=jpg") !important;
+    background: no-repeat center center fixed;
+    background-size: cover;
+    user-select: none; 
+    padding: 0;
+    font-size: var(--body--);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 700;
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+.overlay {
+    background-color: rgba(57, 57, 57, 0.355);
+    height: 100%;
 }
 
 main {
-  background-color: rgba(0, 0, 0, 0.578);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100vh;
-  padding: 15px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+    padding: 15px;
 }
 
-/* ! GENERAL STYLES */
 .input-text {
-  color: #fff;
-  font-size: 1rem;
-  border: none;
-  background: none;
+    color: #fff;
+    font-size: var(--body--);
+    border: none;
+    background: none;
+    max-width: 600px;
 }
 
 .input-text:focus {
-  outline: none;
+    outline: none;
+}
+
+#location-input,
+#background-query-input  {
+    padding: 0.3em 0;
+    margin: 0.5em 0 0.5em 0.2em;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+#location-input:hover,
+#background-query-input:hover {
+    opacity: 1;
+    transition: opacity 0.5s ease;
 }
 
 .task-item {
-  display: flex;
-  line-height: 1.4em;
-  align-items: baseline;
+    display: flex;
+    align-items: baseline;
+    justify-content: left;
 }
 
 .task-item > ul {
-  word-wrap: break-word;
-  margin-left: 0.5rem;
-  font-size: 1.1rem;
+    word-wrap: break-word;
+    margin: 0;
+    padding-left: 0.5rem;
+    line-height: 1rem;
+    font-size: var(--body--)
 }
 
-/* ! GENERAL STYLES */
-/* * TOP CONTAINER */
-.top-container {
-  display: flex;
-  justify-content: space-between;
+.task-done {
+    text-decoration: line-through;
 }
 
-/* * CLOCK INFO */
 .clock-info {
-  text-align: center;
-  font-size: 3.5rem;
-  font-weight: bold;
-  display: flex;
-  flex-direction: column;
+    text-align: center;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
 }
 
-/* * WEATHER INFO */
-
-.weather-div {
-  display: flex;
-  flex-direction: column;
+.temp-city-name {
+    background-color: var(--color--light);
+    color: var(--color--dark);
+    padding: 0.5em 1em;
+    margin-left: 1em;
+    border-radius: 5px;
 }
+
 
 .temp-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.temp-info {
-  font-size: 2rem;
-  margin-left: 0.2em;
-  display: flex;
-  align-items: center;
+    margin-left: 0.2em;
+    display: flex;
+    align-items: center;
 }
 
 .temp-secondary {
-  display: block;
-  flex-direction: column;
-  font-size: 1rem;
+    display: block;
+    border: 1px solid var(--color--light);
+    border-radius: 5px;
+    padding-left: 1em;
+}
+
+.temp-secondary p {
+    margin: 0;
 }
 
 .weather-icon {
-  width: 40px;
+    width: 40px;
 }
 
-/* * GREETING INFO */
+.upper-container {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    margin: 1em 0;
+}
 
 .greeting {
-  text-align: center;
-  font-size: 3.5rem;
-  font-weight: bold;
+    text-align: center;
+    font-weight: bold;
 }
 
 .greeting-container {
-  font-size: 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transition: opacity 0.5s ease;
 }
 
 .input-username {
-  font-size: 2rem;
-  border-bottom: 3px solid #fff;
-  text-align: center;
-  width: 300px;
+    border-bottom: 3px solid #fff;
+    text-align: center;
+    width: 300px;
 }
 
-/* * TODO LIST */
 .task-container {
-  margin-top: 1em;
-  display: flex;
-  flex-direction: column;
-  width: 200px;
+    margin-top: 1em;
+    display: flex;
+    flex-direction: column;
+    width: 200px;
 }
 
 .task-container span {
-  margin: 0.5em 0;
+    margin: 0.5em 0;
 }
 
-.done {
-  color: rgb(92, 92, 92);
-  text-decoration: line-through;
+.central-container {
+    margin: 0 auto;
+    max-width: 600px;
+}
+
+blockquote {
+    font-weight: 200;
+    text-align: center;
 }
 
 .todo-container {
-  color: #fff;
-  background-color: #161616d3;
-  border-radius: 5px;
-  padding: 1em;
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  top: 70px;
-  right: 16px;
+    color: #fff;
+    background-color: var(--color--accent);
+    border-radius: 5px;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .new-task-div {
-  display: flex;
-  flex-wrap: nowrap;
-  padding-top: 0.5em;
+    display: flex;
+    flex-wrap: nowrap;
+    padding-top: 0.5em;
 }
-
-/* * TASKS INPUT */
 
 .new-task-el {
-  margin-left: 0.5em;
+    margin-left: 0.5em;
 }
 
-/* * Pomodoro container */
-
 .nav-item {
-  cursor: pointer;
+    cursor: pointer;
+    margin: 0 1em;
+    background-color: var(--color--accent);
+    border-radius: 5px;
+    padding: .5em 1em;
 }
 
 .pomodoro-container {
-  background-color: #161616d3;
-  border-radius: 5px;
-  padding: 1em;
-  line-height: 2em;
-  position: absolute;
-  bottom: 80px;
-  right: 16px;
-  width: 150px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
 }
 
-.pomodoro-container * {
-  color: #fff;
+.btn {
+    background: none;
+    border: none;
+    padding: 1em;
+    cursor: pointer;
 }
+
+.btn:hover {
+    transform: scale(1.1);
+}
+
+.btn i {
+    font-size: var(--h2);
+    color: var(--color--light);
+}
+
+  .datepicker-input {
+    border: none;
+    background-color: var(--color--light);
+    border-radius: 5px;
+    width: 100%;
+  }  
 
 .pomodoro-timer {
-  display: flex;
-  justify-content: space-evenly;
+    display: flex;
+    justify-content: center;
 }
 
 .pomodoro-timer button {
-  border: none;
-  background: none;
+    border: none;
+    background: none;
 }
 
 .bottom-container {
-  display: flex;
-  justify-content: space-between;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.todo-container #completed-button {
-  cursor: pointer;
+.done-task {
+    text-decoration: line-through;
 }
-
-/* * HIDING BY DEFAULT */
 
 .hide {
-  display: none;
+    display: none;
 }
+
 
 
 /*# sourceMappingURL=/styles.8986bff4.css.map */

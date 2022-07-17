@@ -4,80 +4,80 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/favicon.21b6e204.ico" type="image/x-icon">
     <script src="https://kit.fontawesome.com/8136c026bf.js" crossorigin="anonymous"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="/styles.8986bff4.css">
     <script type="module" src="/main.1f19ae8e.js"></script>
-    <title>Dashboard</title>
+    <title>MiniDash</title>
   <script src="/styles.8986bff4.js"></script></head>
-  <body>
-    <!-- * MAIN -->
+  <body class="animate__fadeIn">
+    <div class="overlay">
     <main id="main">
-      <div class="top-container">
+      <div class="top-container animate__fadeIn">
         <div class="weather-div" id="weather-div">
-          <div id="temp-top"></div>
-          <div id="temp-secondary"></div>
-          <i class="fa-solid fa-location-dot">
-            <input type="text" id="location-input" class="input-text" placeholder="Change location">
-          </i>
-        </div>
-        <div id="open-tasks-container" class="open-tasks-container">
-          <div class="tasks-btn-container">
-            <span id="open-tasks-btn" class="nav-item">Tasks</span>
+          <div id="temp-top" class="temp-top"></div>
+          <div id="temp-secondary" class="temp-secondary">
+            <i class="fa-solid fa-location-arrow">
+                <input type="text" id="location-input" class="input-text" placeholder="Set location">
+              </i>
           </div>
         </div>
+        <div>
+        </div>
+
       </div>
-      <div id="get-username" class="greeting-container hide">
+      <div id="get-username" class="greeting-container animate__fadeIn hide">
         <h2>Hello, how should I call you?</h2>
         <input type="text" name="username" id="username" class="input-text input-username">
       </div>
-      <div id="central-container" class="central-container">
-        <div id="greeting" class="greeting">
+
+      
+      <section id="central-container" class="central-container animate__fadeIn">
+        <section class="upper-container animate__fadeIn">
+            <div class="pomodoro-menu nav-item">
+                <span id="open-pomodoro-btn">Focus</span>
+            </div>
+            <div id="open-tasks-container" class="open-tasks-container">
+                <div class="tasks-btn-container">
+                  <span id="open-tasks-btn" class="nav-item">Tasks</span>
+                </div>
+              </div>
+        </section>
+        <section>
+          <div id="pomodoro-container" class="pomodoro-container hide animate__fadeIn">
+            <div class="pomodoro-timer">
+              <h2 id="pomodoro-minutes"></h2>
+              <h2 id="pomodoro-seconds"></h2>
+            </div>
+            <div id="pomodoro-control-buttons">
+              <button id="start-pomodoro" class="btn">
+                <i id="new-timer-init" class="fa-solid fa-circle-play"></i>
+              </button>
+              <button id="pause-pomodoro" class="btn">
+                <i id="new-timer-pause" class="fa-solid fa-circle-pause"></i>
+              </button>
+            </div>
+            <span id="pomodoro-stats">Today</span>
+          </div>
+        </section>
+        <div id="greeting" class="greeting"></div>
+        
+        <div id="todo-container-parent" class="todo-container animate__fadeIn hide">
+          <div>
+            <input type="text" id="task-input" class="input-text" placeholder="Add new task">
+          </div>
+          <div id="task-container" class="task-container"></div>
         </div>
-        <div id="clock-info" class="clock-info"></div>
-      </div>
+        <div id="quote-container" class="quote-container"></div>
+      </section>
+
       <div class="bottom-container" id="bottom-container">
-        <div class="photo-info">
-          <i class="fa-solid fa-camera">
-            <input type="text" placeholder="Change background" id="background-query-input" class="input-text">
-          </i>
-          <div class="geo-info" id="geo-info"></div>
-          <p id="author-info"></p>
-        </div>
-        <div class="pomodoro-menu nav-item">
-          <span id="open-pomodoro-btn">Pomodoro</span>
-        </div>
+        <div id="clock-info" class="clock-info"></div>
+
       </div>
+
     </main>
-    <!-- * MAIN -->
-    <!-- todo -->
-    <section id="todo-container-parent" class="todo-container hide">
-      <form>
-        <input type="text" id="task-input" class="input-text" placeholder="Add new task">
-      </form>
-      <div id="task-container" class="task-container"></div>
-    </section>
-    <!-- todo -->
-    <!-- * Focus container -->
-    <section>
-      <span id="pomodoro-container" class="pomodoro-container hide">
-        <span class="pomodoro-timer">
-          <span id="pomodoro-minutes">25:</span>
-          <span id="pomodoro-seconds">00</span>
-          <span id="pomodoro-control-buttons">
-            <button id="start-pomodoro">
-              <i id="new-timer-init" class="fa-solid fa-circle-play nav-item"></i>
-            </button>
-            <button id="pause-pomodoro">
-              <i id="new-timer-pause" class="fa-solid fa-circle-pause nav-item"></i>
-            </button>
-          </span>
-        </span>
-        <span id="pomodoro-stats">Today</span>
-      </span>
-    </section>
-    <!-- * Focus container -->
+  </div>
   </body>
 </html>
